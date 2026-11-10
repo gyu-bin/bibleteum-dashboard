@@ -26,7 +26,6 @@ h2 { font-size: 19px; line-height: 1.35; }
 .brand { display: flex; align-items: center; gap: 8px; font-size: 17px; font-weight: 700; letter-spacing: -.035em; }
 .brand-mark { width: 25px; height: 25px; color: var(--plum); }
 .masthead-section { color: var(--muted); font-size: 13px; border-left: 1px solid var(--line); padding-left: 15px; }
-.lock { margin-left: auto; }
 .quiet-button { border: 1px solid var(--line); padding: 5px 12px; border-radius: 4px; background: var(--paper); color: var(--ink); }
 .quiet-button:hover { border-color: var(--plum); color: var(--plum-deep); }
 .page { padding-block: 42px 50px; }
@@ -42,6 +41,9 @@ select { border: 1px solid var(--line); border-radius: 4px; background: var(--pa
 .access label { display: block; font-size: 13px; font-weight: 650; margin-bottom: 6px; }
 .access-input { display: flex; gap: 8px; }
 .access-input input { width: 100%; min-width: 0; padding: 8px 10px; border: 1px solid var(--line); border-radius: 4px; color: var(--ink); background: var(--paper); }
+.access .remember-access { display: flex; align-items: center; gap: 7px; margin: 12px 0 0; }
+.remember-access input { accent-color: var(--plum); margin: 0; }
+#remember-access-hint { margin: 2px 0 0 20px; }
 .action { border: 1px solid var(--plum); border-radius: 4px; background: var(--plum); color: #fff; font-weight: 650; padding: 7px 13px; white-space: nowrap; }
 .action:hover { background: var(--plum-deep); }
 .form-status { min-height: 21px; margin-top: 6px; color: var(--muted); font-size: 13px; }

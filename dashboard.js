@@ -3,6 +3,8 @@ const hosted = location.origin === "https://gyu-bin.github.io"
   && ["/bibleteum-dashboard/", "/bibleteum-dashboard/index.html"].includes(location.pathname);
 const local = location.protocol === "http:" && ["127.0.0.1", "localhost", "[::1]"].includes(location.hostname);
 const summaryEndpoint = "https://hwpatbgcutwjjgymfhiq.supabase.co/functions/v1/usage-analytics-summary";
+const sessionKey = "bibleteum.dashboard.session.v1";
+const sessionPattern = /^bt1\.(\d{13})\.[a-f0-9]{32}\.[a-f0-9]{64}$/;
 const fmt = new Intl.NumberFormat("ko-KR");
 const ratio = new Intl.NumberFormat("ko-KR", { style: "percent", maximumFractionDigits: 1 });
 const koreanTime = new Intl.DateTimeFormat("ko-KR", {
@@ -154,6 +156,33 @@ function display(summary) {
 let loading;
 let accessToken = "";
 
+function sessionIsCurrent(session) {
+  const expiry = session?.match(sessionPattern)?.[1];
+  return expiry !== undefined && Number(expiry) > Date.now();
+}
+
+function forgetSavedSession(session) {
+  try {
+    if (!session || localStorage.getItem(sessionKey) === session) localStorage.removeItem(sessionKey);
+  } catch { /* A browser can disable storage. */ }
+}
+
+function savedSession() {
+  try {
+    const session = localStorage.getItem(sessionKey);
+    if (sessionIsCurrent(session)) return session;
+    if (session) forgetSavedSession(session);
+  } catch { /* Allow manual access if storage is disabled. */ }
+  return null;
+}
+
+function saveSession(session) {
+  try {
+    localStorage.setItem(sessionKey, session);
+    return true;
+  } catch { return false; }
+}
+
 function showStatus(node, message = "", error = false) {
   node.textContent = message;
   node.toggleAttribute("data-error", error);
@@ -165,7 +194,8 @@ function lock(focus = true) {
   loading = undefined;
   byId("access-token").value = "";
   byId("unlock").disabled = false;
-  for (const id of ["content", "demo", "range", "lock", "status"]) byId(id).hidden = true;
+  byId("retry-saved").hidden = true;
+  for (const id of ["content", "demo", "range", "status"]) byId(id).hidden = true;
   for (const id of [
     "status", "headline", "chart", "chart-peak", "chart-start", "chart-end", "daily",
     "funnel", "features-grid", "reading-mix", "weekdays", "hours", "platform", "versions",
@@ -176,30 +206,38 @@ function lock(focus = true) {
   if (focus) byId("access-token").focus();
 }
 
-async function load() {
+async function load({ remember = false } = {}) {
   if (hosted && !accessToken) return;
   loading?.abort();
   const controller = new AbortController();
   loading = controller;
   const status = byId("status");
-  const unlocking = hosted && !byId("access").hidden;
-  const activeStatus = unlocking ? byId("access-status") : status;
-  status.hidden = unlocking;
+  const unlocking = hosted && byId("range").hidden;
+  const requestToken = accessToken;
+  const usingSession = sessionPattern.test(requestToken);
+  const activeStatus = unlocking && !usingSession ? byId("access-status") : status;
+  if (unlocking) byId("retry-saved").hidden = true;
+  if (unlocking && usingSession) byId("access").hidden = true;
+  status.hidden = activeStatus !== status;
   showStatus(activeStatus, "통계를 불러오는 중이에요.");
   byId("content").hidden = true;
   byId("demo").hidden = true;
   try {
     const days = byId("days").value;
     const response = hosted
-      ? await fetch(`${summaryEndpoint}?days=${days}`, {
-        headers: { Authorization: `Bearer ${accessToken}` }, signal: controller.signal,
+      ? await fetch(`${summaryEndpoint}?days=${days}${remember ? "&remember=1" : ""}`, {
+        headers: { Authorization: `Bearer ${requestToken}` }, signal: controller.signal,
         credentials: "omit", redirect: "error", cache: "no-store", referrerPolicy: "no-referrer",
       })
       : await fetch(`/api/summary?days=${days}`, { signal: controller.signal, cache: "no-store" });
     if (controller.signal.aborted) return;
     if (hosted && [401, 403].includes(response.status)) {
+      if (usingSession) forgetSavedSession(requestToken);
       lock();
-      showStatus(byId("access-status"), "조회 코드를 확인해 주세요.", true);
+      showStatus(byId("access-status"), usingSession
+        ? "저장된 로그인이 끝났어요. 조회 코드를 다시 입력해 주세요."
+        : "조회 코드를 확인해 주세요.", true);
+      byId("retry-saved").hidden = !savedSession();
       return;
     }
     if (!response.ok) throw new Error("Summary unavailable");
@@ -207,7 +245,18 @@ async function load() {
     if (controller.signal.aborted) return;
     const { demo, summary } = hosted ? { demo: false, summary: payload } : payload;
     display(summary);
-    showStatus(status, Object.values(summary.totals).some((total) => total > 0)
+    let saved = true;
+    if (unlocking && !usingSession) {
+      const session = remember ? response.headers.get("X-BibleTeum-Session") : null;
+      if (sessionIsCurrent(session)) {
+        accessToken = session;
+        saved = saveSession(session);
+      } else {
+        forgetSavedSession();
+        saved = !remember;
+      }
+    }
+    showStatus(status, !saved ? "이 브라우저에 로그인을 저장하지 못했어요." : Object.values(summary.totals).some((total) => total > 0)
       ? `집계 기준 ${koreanTime.format(new Date(summary.as_of))}`
       : "아직 이 기간에 들어온 데이터가 없어요.");
     status.hidden = false;
@@ -215,14 +264,16 @@ async function load() {
     byId("content").hidden = false;
     if (unlocking) {
       byId("access").hidden = true;
-      byId("lock").hidden = false;
       byId("range").hidden = false;
-      byId("lock").focus();
+      if (!usingSession) byId("page-title").focus();
     }
   } catch {
     if (controller.signal.aborted) return;
-    if (unlocking) lock();
-    showStatus(activeStatus, "통계를 불러오지 못했어요. 잠시 뒤 다시 시도해 주세요.", true);
+    if (unlocking) {
+      lock(!usingSession);
+      byId("retry-saved").hidden = !savedSession();
+    }
+    showStatus(unlocking ? byId("access-status") : status, "통계를 불러오지 못했어요. 잠시 뒤 다시 시도해 주세요.", true);
   } finally {
     if (loading === controller) {
       loading = undefined;
@@ -231,7 +282,18 @@ async function load() {
   }
 }
 
-byId("days").addEventListener("change", load);
+function restoreSavedAccess() {
+  const session = savedSession();
+  if (!session) {
+    byId("retry-saved").hidden = true;
+    return;
+  }
+  accessToken = session;
+  byId("unlock").disabled = true;
+  void load();
+}
+
+byId("days").addEventListener("change", () => void load());
 if (hosted) {
   byId("access").hidden = false;
   byId("access-form").addEventListener("submit", (event) => {
@@ -246,10 +308,19 @@ if (hosted) {
     }
     accessToken = value;
     byId("unlock").disabled = true;
-    void load();
+    void load({ remember: byId("remember-access").checked });
   });
-  byId("lock").addEventListener("click", () => lock());
+  byId("retry-saved").addEventListener("click", restoreSavedAccess);
+  window.addEventListener("storage", (event) => {
+    if (event.storageArea === localStorage && (event.key === sessionKey || event.key === null) && event.newValue === null) {
+      lock(false);
+    }
+  });
   window.addEventListener("pagehide", () => lock(false));
+  window.addEventListener("pageshow", (event) => {
+    if (event.persisted) restoreSavedAccess();
+  });
+  restoreSavedAccess();
 } else if (local) {
   byId("range").hidden = false;
   void load();
