@@ -7,8 +7,8 @@
   <meta name="referrer" content="no-referrer">
   <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; connect-src 'self' https://hwpatbgcutwjjgymfhiq.supabase.co; base-uri 'none'; form-action 'none'">
   <title>사용 통계 | 바이블틈</title>
-  <link rel="stylesheet" href="./dashboard.css?v=4">
-  <script type="module" src="./dashboard.js?v=4"></script>
+  <link rel="stylesheet" href="./dashboard.css?v=3">
+  <script type="module" src="./dashboard.js?v=3"></script>
 </head>
 <body>
   <header class="masthead">
@@ -27,7 +27,6 @@
       <div>
         <h1>사용 통계</h1>
         <p class="intro-copy">앱을 처음 연 뒤 말씀을 읽고, 다시 찾아오는 흐름을 봅니다.</p>
-        <a class="store-jump" href="#store-metrics">스토어 통계 보기 ↓</a>
       </div>
       <label id="range" class="range" for="days" hidden>
         <span>조회 기간</span>
@@ -87,16 +86,7 @@
         </section>
       </div>
     </div>
-    <section class="store-report" aria-labelledby="store-metrics">
-      <div class="section-head">
-        <h2 id="store-metrics" tabindex="-1">스토어 통계</h2>
-        <p id="store-checked" class="muted" hidden></p>
-      </div>
-      <p class="muted section-note">운영자가 각 스토어 콘솔에서 확인한 뒤 갱신해요. 위 사용 통계의 조회 기간과 별도로 표시해요.</p>
-      <p id="store-status" class="status store-status" role="status" hidden></p>
-      <div id="store-cards" class="store-grid" hidden></div>
-    </section>
-    <footer>앱 사용 통계는 한국 시간 기준이며, 통계 전송에 동의한 설치만 집계해요.</footer>
+    <footer>공개 집계 · 한국 시간 기준 · 통계 전송에 동의한 설치만 포함합니다.</footer>
   </main>
 </body>
 </html>

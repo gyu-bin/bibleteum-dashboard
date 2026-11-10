@@ -8,11 +8,6 @@ const ratio = new Intl.NumberFormat("ko-KR", { style: "percent", maximumFraction
 const koreanTime = new Intl.DateTimeFormat("ko-KR", {
   dateStyle: "medium", timeStyle: "short", timeZone: "Asia/Seoul",
 });
-const storeDate = new Intl.DateTimeFormat("ko-KR", { dateStyle: "medium", timeZone: "UTC" });
-const storeSources = [
-  ["android", "Google Play", "https://play.google.com/console/u/0/developers/6405739799250265614/app/4974126426049979460/statistics"],
-  ["ios", "App Store", "https://appstoreconnect.apple.com/apps/6827408979/analytics"],
-];
 const labels = {
   first_open: "처음 앱 열기",
   onboarding_completed: "첫 설정 완료",
@@ -163,70 +158,6 @@ function showStatus(node, message, error = false) {
   node.toggleAttribute("data-error", error);
 }
 
-function formatStoreDate(value) {
-  if (typeof value !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(value)) return "";
-  const date = new Date(`${value}T00:00:00Z`);
-  return Number.isFinite(date.getTime()) && date.toISOString().slice(0, 10) === value ? storeDate.format(date) : "";
-}
-
-function storeMetric(row) {
-  if (typeof row?.label !== "string") return null;
-  const item = element("div", undefined, "store-metric");
-  const detail = element("dd");
-  if (Number.isFinite(row.value) && row.value >= 0 && typeof row.unit === "string") {
-    detail.append(element("strong", `${count(row.value)}${row.unit}`, "store-value"));
-  } else {
-    detail.append(element("span", typeof row.status === "string" ? row.status : "데이터 없음", "muted"));
-  }
-  const date = formatStoreDate(row.date);
-  const note = typeof row.note === "string" ? row.note : "";
-  if (date || note) detail.append(element("p", [date, note].filter(Boolean).join(" · "), "muted store-value-detail"));
-  item.append(element("dt", row.label), detail);
-  return item;
-}
-
-function storeCard(data, label, url) {
-  const card = element("article", undefined, "store-card");
-  const start = formatStoreDate(data?.from);
-  const end = formatStoreDate(data?.through);
-  const period = start && end ? `${start} ~ ${end}` : "";
-  const timeZone = typeof data?.timeZone === "string" ? data.timeZone : "";
-  const rows = Array.isArray(data?.metrics) ? data.metrics.map(storeMetric).filter(Boolean) : [];
-  card.append(element("h3", label));
-  if (period) card.append(element("p", [period, timeZone].filter(Boolean).join(" · "), "muted store-period"));
-  if (rows.length) {
-    const metrics = element("dl", undefined, "store-metrics");
-    metrics.append(...rows);
-    card.append(metrics);
-  } else {
-    card.append(element("p", "표시할 스토어 통계가 없어요.", "muted section-note"));
-  }
-  const source = element("a", `${label}에서 보기 ↗`, "store-source");
-  source.href = url;
-  card.append(source);
-  return card;
-}
-
-async function loadStoreMetrics() {
-  const status = byId("store-status");
-  const cards = byId("store-cards");
-  try {
-    const response = await fetch("./store-metrics.json", { credentials: "omit", redirect: "error", cache: "no-cache" });
-    if (!response.ok) throw new Error("Store metrics unavailable");
-    const snapshot = await response.json();
-    const checked = formatStoreDate(snapshot?.checkedOn);
-    if (!checked || !snapshot.platforms) throw new Error("Invalid store metrics");
-    const checkedLabel = byId("store-checked");
-    checkedLabel.textContent = `확인일 ${checked}`;
-    checkedLabel.hidden = false;
-    cards.replaceChildren(...storeSources.map(([key, label, url]) => storeCard(snapshot.platforms[key], label, url)));
-    cards.hidden = false;
-  } catch {
-    status.hidden = false;
-    showStatus(status, "저장된 스토어 통계를 불러오지 못했어요.");
-  }
-}
-
 async function load() {
   loading?.abort();
   const controller = new AbortController();
@@ -269,7 +200,6 @@ if (hosted || local) {
   byId("range").hidden = false;
   byId("days").addEventListener("change", () => void load());
   void load();
-  void loadStoreMetrics();
 } else {
   byId("status").hidden = false;
   showStatus(byId("status"), "지원되는 대시보드 주소에서 열어 주세요.", true);
