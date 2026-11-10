@@ -14,7 +14,7 @@
 body { margin: 0; background: var(--canvas); color: var(--ink); font: 15px/1.6 -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif; }
 select { font: inherit; }
 :focus-visible { outline: 2px solid var(--plum); outline-offset: 3px; }
-h1, h2, p { margin: 0; }
+h1, h2, h3, p { margin: 0; }
 h1, h2 { letter-spacing: -.04em; }
 h1 { font: 600 clamp(32px, 5vw, 46px)/1.14 Georgia, "Apple SD Gothic Neo", serif; }
 h2 { font-size: 19px; line-height: 1.35; }
@@ -27,6 +27,7 @@ h2 { font-size: 19px; line-height: 1.35; }
 .page { padding-block: 42px 50px; }
 .intro { display: flex; align-items: end; justify-content: space-between; gap: 18px; margin-bottom: 26px; }
 .intro-copy { margin-top: 10px; color: var(--muted); }
+.store-jump { display: inline-block; margin-top: 8px; color: var(--plum-deep); font-size: 13px; text-underline-offset: 3px; }
 .range { display: flex; align-items: center; gap: 10px; color: var(--muted); font-size: 13px; white-space: nowrap; }
 select { border: 1px solid var(--line); border-radius: 4px; background: var(--paper); color: var(--ink); padding: 8px 10px; }
 .status { margin-block: 0 16px; color: var(--muted); font-size: 13px; }
@@ -44,6 +45,20 @@ select { border: 1px solid var(--line); border-radius: 4px; background: var(--pa
 .full-width { grid-column: 1 / -1; }
 .section-head { display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 4px 12px; }
 .section-note { margin-top: 5px; }
+.store-report { border-top: 1px solid var(--line); margin-top: 26px; padding-block: 22px 26px; }
+#store-metrics { scroll-margin-top: 20px; }
+.store-status { margin-block: 14px 0; }
+.store-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; margin-top: 14px; }
+.store-card { padding: 16px 18px; border: 1px solid var(--line); border-radius: 5px; background: var(--paper); }
+.store-card h3 { font-size: 16px; line-height: 1.45; letter-spacing: -.025em; }
+.store-period { margin-top: 3px; }
+.store-metrics { margin: 12px 0 0; }
+.store-metric { border-top: 1px solid var(--line); padding-block: 9px; }
+.store-metric dt { font-size: 14px; font-weight: 650; }
+.store-metric dd { margin: 2px 0 0; }
+.store-value { color: var(--plum-deep); font-size: 23px; line-height: 1.2; font-variant-numeric: tabular-nums; }
+.store-value-detail { margin-top: 3px; }
+.store-source { display: inline-block; margin-top: 6px; color: var(--plum-deep); font-size: 13px; text-underline-offset: 3px; }
 .chart-area { position: relative; margin-top: 20px; border-bottom: 1px solid var(--line); }
 .chart { width: 100%; height: 207px; display: block; color: var(--plum); }
 .chart-empty { position: absolute; inset: 0; display: grid; place-items: center; color: var(--muted); font-size: 14px; text-align: center; pointer-events: none; }
@@ -74,6 +89,7 @@ footer { color: var(--muted); font-size: 13px; border-top: 1px solid var(--line)
 }
 @media (max-width: 720px) {
   .report-grid { display: block; margin-top: 24px; }
+  .store-grid { grid-template-columns: minmax(0, 1fr); gap: 12px; }
   .metric-strip { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .metric { padding: 11px 13px; }
   .metric + .metric { border-left: 0; }
