@@ -7,8 +7,8 @@
   <meta name="referrer" content="no-referrer">
   <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; connect-src 'self' https://hwpatbgcutwjjgymfhiq.supabase.co; base-uri 'none'; form-action 'none'">
   <title>사용 통계 | 바이블틈</title>
-  <link rel="stylesheet" href="./dashboard.css?v=2">
-  <script type="module" src="./dashboard.js?v=2"></script>
+  <link rel="stylesheet" href="./dashboard.css?v=3">
+  <script type="module" src="./dashboard.js?v=3"></script>
 </head>
 <body>
   <header class="masthead">
@@ -19,13 +19,13 @@
         </svg>
         <span>바이블틈</span>
       </div>
-      <span class="masthead-section">운영자 대시보드</span>
+      <span class="masthead-section">통계 대시보드</span>
     </div>
   </header>
   <main class="page">
     <div class="intro">
       <div>
-        <h1 id="page-title" tabindex="-1">사용 통계</h1>
+        <h1>사용 통계</h1>
         <p class="intro-copy">앱을 처음 연 뒤 말씀을 읽고, 다시 찾아오는 흐름을 봅니다.</p>
       </div>
       <label id="range" class="range" for="days" hidden>
@@ -39,27 +39,6 @@
     </div>
 
     <noscript><p class="status">통계를 보려면 브라우저에서 자바스크립트를 켜 주세요.</p></noscript>
-    <section id="access" class="access" aria-labelledby="access-title" hidden>
-      <div class="access-copy">
-        <h2 id="access-title">운영자 확인</h2>
-        <p>이 브라우저에서 처음 열 때 조회 코드를 입력해 주세요.</p>
-      </div>
-      <form id="access-form" method="post" autocomplete="off">
-        <label for="access-token">통계 조회 코드</label>
-        <div class="access-input">
-          <input id="access-token" type="password" autocomplete="off" autocapitalize="off" spellcheck="false" required maxlength="64">
-          <button id="unlock" class="action" type="submit">통계 열기</button>
-        </div>
-        <label class="remember-access">
-          <input id="remember-access" type="checkbox" checked aria-describedby="remember-access-hint">
-          이 브라우저에서 최대 30일간 로그인 유지
-        </label>
-        <p id="remember-access-hint" class="muted">개인 기기에서만 선택해 주세요.</p>
-        <p id="access-status" class="form-status" role="status"></p>
-        <button id="retry-saved" class="quiet-button" type="button" hidden>저장된 로그인 다시 시도</button>
-      </form>
-    </section>
-
     <p id="status" class="status" role="status" hidden></p>
     <p id="demo" class="status demo" hidden>예시 데이터 · 화면 검토용</p>
     <div id="content" hidden>
@@ -107,7 +86,7 @@
         </section>
       </div>
     </div>
-    <footer>한국 시간 기준 · 통계 전송에 동의한 설치만 집계합니다.</footer>
+    <footer>공개 집계 · 한국 시간 기준 · 통계 전송에 동의한 설치만 포함합니다.</footer>
   </main>
 </body>
 </html>

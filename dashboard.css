@@ -12,9 +12,7 @@
 }
 * { box-sizing: border-box; }
 body { margin: 0; background: var(--canvas); color: var(--ink); font: 15px/1.6 -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif; }
-button, select, input { font: inherit; }
-button { cursor: pointer; }
-button:disabled { cursor: wait; opacity: .65; }
+select { font: inherit; }
 :focus-visible { outline: 2px solid var(--plum); outline-offset: 3px; }
 h1, h2, p { margin: 0; }
 h1, h2 { letter-spacing: -.04em; }
@@ -26,27 +24,14 @@ h2 { font-size: 19px; line-height: 1.35; }
 .brand { display: flex; align-items: center; gap: 8px; font-size: 17px; font-weight: 700; letter-spacing: -.035em; }
 .brand-mark { width: 25px; height: 25px; color: var(--plum); }
 .masthead-section { color: var(--muted); font-size: 13px; border-left: 1px solid var(--line); padding-left: 15px; }
-.quiet-button { border: 1px solid var(--line); padding: 5px 12px; border-radius: 4px; background: var(--paper); color: var(--ink); }
-.quiet-button:hover { border-color: var(--plum); color: var(--plum-deep); }
 .page { padding-block: 42px 50px; }
 .intro { display: flex; align-items: end; justify-content: space-between; gap: 18px; margin-bottom: 26px; }
 .intro-copy { margin-top: 10px; color: var(--muted); }
 .range { display: flex; align-items: center; gap: 10px; color: var(--muted); font-size: 13px; white-space: nowrap; }
 select { border: 1px solid var(--line); border-radius: 4px; background: var(--paper); color: var(--ink); padding: 8px 10px; }
 .status { margin-block: 0 16px; color: var(--muted); font-size: 13px; }
-.status[data-error], .form-status[data-error] { color: var(--error); }
+.status[data-error] { color: var(--error); }
 .demo { color: var(--plum-deep); font-weight: 650; }
-.access { max-width: 660px; display: grid; grid-template-columns: 1fr 1.45fr; gap: 30px; border-block: 1px solid var(--line); padding-block: 24px; margin-top: 36px; }
-.access-copy p { margin-top: 7px; color: var(--muted); font-size: 14px; }
-.access label { display: block; font-size: 13px; font-weight: 650; margin-bottom: 6px; }
-.access-input { display: flex; gap: 8px; }
-.access-input input { width: 100%; min-width: 0; padding: 8px 10px; border: 1px solid var(--line); border-radius: 4px; color: var(--ink); background: var(--paper); }
-.access .remember-access { display: flex; align-items: center; gap: 7px; margin: 12px 0 0; }
-.remember-access input { accent-color: var(--plum); margin: 0; }
-#remember-access-hint { margin: 2px 0 0 20px; }
-.action { border: 1px solid var(--plum); border-radius: 4px; background: var(--plum); color: #fff; font-weight: 650; padding: 7px 13px; white-space: nowrap; }
-.action:hover { background: var(--plum-deep); }
-.form-status { min-height: 21px; margin-top: 6px; color: var(--muted); font-size: 13px; }
 .metric-strip { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); border-block: 1px solid var(--line); background: var(--paper); }
 .metric { padding: 17px 18px 18px; min-width: 0; }
 .metric + .metric { border-left: 1px solid var(--line); }
@@ -102,6 +87,5 @@ footer { color: var(--muted); font-size: 13px; border-top: 1px solid var(--line)
   .masthead-section { padding-left: 10px; }
   .page { padding-top: 29px; }
   .intro { align-items: start; flex-direction: column; gap: 13px; margin-bottom: 20px; }
-  .access { grid-template-columns: 1fr; gap: 15px; margin-top: 26px; }
   .chart { height: 155px; }
 }
