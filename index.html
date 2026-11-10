@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="referrer" content="no-referrer">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; connect-src 'self' https://hwpatbgcutwjjgymfhiq.supabase.co; base-uri 'none'; form-action 'none'">
+  <title>사용 통계 | 바이블틈</title>
+  <link rel="stylesheet" href="./dashboard.css">
+  <script defer src="./dashboard.js"></script>
+</head>
+<body>
+  <header class="masthead">
+    <div class="masthead-inner">
+      <div class="brand">
+        <svg class="brand-mark" viewBox="0 0 28 28" fill="none" aria-hidden="true">
+          <path d="M14 22c-3-2.6-6.4-3.4-10.5-3V7.4c4.3-.5 7.9.7 10.5 3.2m0 11.4c3-2.6 6.4-3.4 10.5-3V7.4c-4.3-.5-7.9.7-10.5 3.2m0 0V22" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <span>바이블틈</span>
+      </div>
+      <span class="masthead-section">운영자 대시보드</span>
+      <button id="lock" class="quiet-button lock" type="button" hidden>잠그기</button>
+    </div>
+  </header>
+  <main class="page">
+    <div class="intro">
+      <div>
+        <h1>사용 통계</h1>
+        <p class="intro-copy">앱을 처음 연 뒤 말씀을 읽고, 다시 찾아오는 흐름을 봅니다.</p>
+      </div>
+      <label id="range" class="range" for="days" hidden>
+        <span>조회 기간</span>
+        <select id="days">
+          <option value="7">최근 7일</option>
+          <option value="30" selected>최근 30일</option>
+          <option value="90">최근 90일</option>
+        </select>
+      </label>
+    </div>
+
+    <noscript><p class="status">통계를 보려면 브라우저에서 자바스크립트를 켜 주세요.</p></noscript>
+    <section id="access" class="access" aria-labelledby="access-title" hidden>
+      <div class="access-copy">
+        <h2 id="access-title">운영자 확인</h2>
+        <p>통계 조회 코드를 입력해 주세요. 입력한 코드는 이 페이지를 새로고침하거나 잠글 때 지워집니다.</p>
+      </div>
+      <form id="access-form" method="post" autocomplete="off">
+        <label for="access-token">통계 조회 코드</label>
+        <div class="access-input">
+          <input id="access-token" type="password" autocomplete="off" autocapitalize="off" spellcheck="false" required maxlength="64">
+          <button id="unlock" class="action" type="submit">통계 열기</button>
+        </div>
+        <p id="access-status" class="form-status" role="status"></p>
+      </form>
+    </section>
+
+    <p id="status" class="status" role="status" hidden></p>
+    <p id="demo" class="status demo" hidden>예시 데이터 · 화면 검토용</p>
+    <div id="content" hidden>
+      <section class="overview" aria-labelledby="overview">
+        <h2 id="overview" class="sr-only">주요 지표</h2>
+        <div id="headline" class="metric-strip"></div>
+      </section>
+      <div class="report-grid">
+        <section class="report" aria-labelledby="trends">
+          <div class="section-head"><h2 id="trends">일별 활성 설치</h2><p id="chart-peak" class="muted"></p></div>
+          <div class="chart-area">
+            <svg id="chart" class="chart" aria-hidden="true" preserveAspectRatio="none" viewBox="0 0 900 126"></svg>
+            <p id="chart-empty" class="chart-empty" hidden>이 기간에 앱을 연 기록이 없어요.</p>
+          </div>
+          <div class="chart-labels muted"><span id="chart-start"></span><span id="chart-end"></span></div>
+          <details>
+            <summary>일별 숫자 보기</summary>
+            <div id="daily" class="scroll"></div>
+          </details>
+        </section>
+        <section class="report" aria-labelledby="first-steps">
+          <div class="section-head"><h2 id="first-steps">신규 설치의 이용 흐름</h2></div>
+          <p class="muted section-note">기간 중 처음 실행한 설치가 각 단계에 한 번이라도 도달했는지 보여 줍니다.</p>
+          <div id="funnel" class="funnel"></div>
+        </section>
+        <section class="report" aria-labelledby="features">
+          <div class="section-head"><h2 id="features">기능별 사용</h2><p class="muted">기간 내 이용 횟수</p></div>
+          <div id="features-grid" class="scroll"></div>
+        </section>
+        <section class="report" aria-labelledby="reading-habits">
+          <div class="section-head"><h2 id="reading-habits">읽기와 필사</h2><p id="reading-mix" class="muted"></p></div>
+          <div id="weekdays" class="scroll"></div>
+          <details>
+            <summary>시간대별 완료 보기</summary>
+            <div id="hours" class="scroll"></div>
+          </details>
+        </section>
+        <section class="report full-width" aria-labelledby="platforms">
+          <div class="section-head"><h2 id="platforms">기기별 사용</h2></div>
+          <div id="platform" class="scroll"></div>
+          <details id="versions-details" hidden>
+            <summary>앱 버전별 보기</summary>
+            <div id="versions" class="scroll"></div>
+          </details>
+        </section>
+      </div>
+    </div>
+    <footer>한국 시간 기준 · 통계 전송에 동의한 설치만 집계합니다.</footer>
+  </main>
+</body>
+</html>
