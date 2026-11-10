@@ -207,9 +207,9 @@ async function load() {
     if (controller.signal.aborted) return;
     const { demo, summary } = hosted ? { demo: false, summary: payload } : payload;
     display(summary);
-    showStatus(status, summary.totals.active_installations === 0 && summary.totals.new_installations === 0
-      ? "아직 이 기간에 들어온 데이터가 없어요."
-      : `집계 기준 ${koreanTime.format(new Date(summary.as_of))}`);
+    showStatus(status, Object.values(summary.totals).some((total) => total > 0)
+      ? `집계 기준 ${koreanTime.format(new Date(summary.as_of))}`
+      : "아직 이 기간에 들어온 데이터가 없어요.");
     status.hidden = false;
     byId("demo").hidden = !demo;
     byId("content").hidden = false;
