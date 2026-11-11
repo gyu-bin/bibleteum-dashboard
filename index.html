@@ -7,8 +7,8 @@
   <meta name="referrer" content="no-referrer">
   <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; connect-src 'self' https://hwpatbgcutwjjgymfhiq.supabase.co; base-uri 'none'; form-action 'none'">
   <title>사용 통계 | 바이블틈</title>
-  <link rel="stylesheet" href="./dashboard.css?v=3">
-  <script type="module" src="./dashboard.js?v=3"></script>
+  <link rel="stylesheet" href="./dashboard.css?v=5">
+  <script type="module" src="./dashboard.js?v=5"></script>
 </head>
 <body>
   <header class="masthead">
@@ -45,6 +45,12 @@
       <section class="overview" aria-labelledby="overview">
         <h2 id="overview" class="sr-only">주요 지표</h2>
         <div id="headline" class="metric-strip"></div>
+      </section>
+      <section class="reading-progress" aria-labelledby="reading-progress-title">
+        <h2 id="reading-progress-title">말씀 읽기 진행</h2>
+        <p class="muted section-note">조회 기간에 읽기를 시작한 설치를 한 번씩 세고, 시작 후 24시간 안에 같은 읽기를 마쳤는지 봅니다.</p>
+        <p id="reading-progress-empty" class="muted section-note" hidden></p>
+        <div id="reading-progress-counts" class="metric-strip reading-progress-strip" hidden></div>
       </section>
       <div class="report-grid">
         <section class="report" aria-labelledby="trends">

@@ -116,6 +116,25 @@ function drawFunnel(rows, total) {
   byId("funnel").replaceChildren(...nodes);
 }
 
+function displayReadingProgress(progress) {
+  const cards = byId("reading-progress-counts");
+  const message = byId("reading-progress-empty");
+  cards.hidden = !progress;
+  message.hidden = progress?.started > 0;
+  if (!progress) {
+    cards.replaceChildren();
+    message.textContent = "읽기 진행 집계를 아직 불러올 수 없어요.";
+    return;
+  }
+  message.textContent = "이 기간에 읽기를 시작한 기록이 없어요.";
+  cards.replaceChildren(
+    metric("읽기 시작", count(progress.started), "기간 중 읽기를 시작한 설치"),
+    metric("24시간 내 완료", count(progress.completed), "시작한 읽기를 한 번 이상 마침", true),
+    metric("24시간 내 미완료", count(progress.unfinished), "모든 시작에서 24시간 내 완료 기록 없음"),
+    metric("결과 대기", count(progress.pending), "시작 후 아직 24시간이 지나지 않음"),
+  );
+}
+
 function display(summary) {
   const { totals, first_reading_24h: reading, retention, daily, platforms, funnel, versions = [],
     reading_by_hour: hours = [], reading_by_weekday: weekdays = [] } = summary;
@@ -128,6 +147,7 @@ function display(summary) {
     metric("다음 날 재방문", rate(retention.d1.returned, retention.d1.eligible), fraction(retention.d1.returned, retention.d1.eligible)),
     metric("7일 뒤 재방문", rate(retention.d7.returned, retention.d7.eligible), fraction(retention.d7.returned, retention.d7.eligible)),
   );
+  displayReadingProgress(summary.reading_progress_24h);
   drawChart(daily);
   drawFunnel(funnel, totals.new_installations);
   byId("features-grid").replaceChildren(buildTable("", ["기능", "횟수"], Object.entries(labels)
@@ -179,7 +199,7 @@ async function load() {
     if (controller.signal.aborted) return;
     const { demo, summary } = hosted ? { demo: false, summary: payload } : payload;
     display(summary);
-    showStatus(status, Object.values(summary.totals).some((total) => total > 0)
+    showStatus(status, (summary.reading_progress_24h?.started > 0 || Object.values(summary.totals).some((total) => total > 0))
       ? `집계 기준 ${koreanTime.format(new Date(summary.as_of))}`
       : "아직 이 기간에 들어온 데이터가 없어요.");
     byId("demo").hidden = !demo;
